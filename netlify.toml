@@ -1,0 +1,67 @@
+# Netlify configuration for the Almagest Space Corporation website.
+# The site is plain HTML/CSS/JS: there is no build step. Netlify publishes the
+# `site/` folder exactly as it is in the main branch of the GitHub repository.
+
+[build]
+  # No build command: the files are already final.
+  publish = "site"
+
+# Keep every file at its exact address. In particular, the Google Search
+# Console verification file (googleXXXXXXXX.html) must be served at
+# /googleXXXXXXXX.html without being rewritten to /googleXXXXXXXX.
+[build.processing.html]
+  pretty_urls = false
+
+# Basic security headers for every page and file.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Videos and images change rarely: let browsers keep them for a week.
+# (CSS and JS keep Netlify's default, always-fresh caching; their links also
+# carry ?v=N version numbers.)
+[[headers]]
+  for = "/assets/video/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# ---------------------------------------------------------------------------
+# Old domain → new domain (phase 2, after almagest.space is approved and live)
+# These rules only apply to visits that arrive on almagestspace.com, so they
+# do nothing until that domain is added to this Netlify site as a domain alias
+# and its two website DNS records point here (see the DNS plan in the private project).
+# Every old address forwards permanently (301) to the same path on the new
+# domain, which also tells Google the site has moved.
+# ---------------------------------------------------------------------------
+[[redirects]]
+  from = "https://almagestspace.com/*"
+  to = "https://almagest.space/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.almagestspace.com/*"
+  to = "https://almagest.space/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://almagestspace.com/*"
+  to = "https://almagest.space/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.almagestspace.com/*"
+  to = "https://almagest.space/:splat"
+  status = 301
+  force = true
